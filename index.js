@@ -5,6 +5,8 @@
 var express = require('express');
 var app = express();
 
+let newPort = 3000
+
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');
@@ -25,6 +27,16 @@ app.get("/api/hello", function (req, res) {
 });
 
 
+
+app.get("/api/date?",(req,res)=>{
+  let query = req.query
+  if (query == "condition"){
+    //do something
+    es.json({unix:output})
+  }
+  let output = new Date().toUTCString()
+  
+})
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
