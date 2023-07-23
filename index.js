@@ -34,42 +34,35 @@ app.get("/api", (req, res) => {
   res.json({ unix: currentUnix, utc: currentDate });
 });
 
-app.get("/api/:date?", (req, res) => {
-  let { date } = req.params;
 
-  // Check if the date parameter is empty or not provided
-  if (!date) {
-    let now = Date.now();
-    return res.json({ unix: now, utc: new Date(now).toUTCString() });
+app.get('/api/:date?', (req, res) => {
+  const dateString = req.params.date
+  const dateStringRegex = /^[0-9]+$/
+  const numbersOnly = dateStringRegex.test(dateString)
+ 
+  if (!numbersOnly) {
+    const unixTimestamp = Date.parse(dateString)
+    const utcDate = new Date(unixTimestamp).toUTCString()
+ 
+    unixTimestamp
+    ? res.json({ unix: unixTimestamp, utc: utcDate })
+    : res.json({ error: "Invalid Date" })
+  } 
+  else {
+    const unixTimestamp = parseInt(dateString)
+    const actualDate = new Date(unixTimestamp)
+    const utcDate = actualDate.toUTCString()
+ 
+    res.json({ unix: unixTimestamp, utc: utcDate })
   }
-
-  // Check if the provided date is a valid number (Unix timestamp)
-  if (!isNaN(date)) {
-    // Convert the date to a number and create the Date object
-    let unixTimestamp = Number(date);
-    let parsedDate = new Date(unixTimestamp);
-
-    // Check if the parsed date is valid
-    if (isNaN(parsedDate)) {
-      // If the parsed date is invalid, return the error object
-      res.json({ error: "Invalid Date" });
-    } else {
-      // If the parsed date is valid, return the Unix timestamp and UTC string
-      res.json({ unix: unixTimestamp, utc: parsedDate.toUTCString() });
-    }
-  } else {
-    // The date is a string, try parsing it as a regular date
-    let parsedDate = new Date(date);
-
-    if (isNaN(parsedDate) || date.trim() === "") {
-      // If the parsed date is invalid or an empty string, return the error object
-      res.json({ error: "Invalid Date" });
-    } else {
-      // If the parsed date is valid, return the Unix timestamp and UTC string
-      res.json({ unix: parsedDate.getTime(), utc: parsedDate.toUTCString() });
-    }
-  }
-});
+ 
+   app.get('/api', (req, res) => {
+     const currentDate = new Date().toUTCString()
+     const currentUnix = Date.parse(currentDate)
+     res.json({ unix: currentUnix, utc: currentDate })
+   })
+ })
+ 
 
 
 
