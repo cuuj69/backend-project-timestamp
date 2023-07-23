@@ -29,14 +29,24 @@ app.get("/api/hello", function (req, res) {
 
 
 app.get("/api/date?",(req,res)=>{
-  let query = req.query
-  if (query == "condition"){
-    //do something
-    es.json({unix:output})
+  let { date } = req.params;
+
+  if (date) {
+    // Check if the provided date is valid
+    let parsedDate = new Date(date);
+    if (isNaN(parsedDate)) {
+      // If the parsed date is invalid, return the error object
+      res.json({ error: "Invalid Date" });
+    } else {
+      // If the parsed date is valid, return the Unix timestamp and UTC string
+      res.json({ unix: parsedDate.getTime(), utc: parsedDate.toUTCString() });
+    }
+  } else {
+    // If the date parameter is empty, return the current time
+    let now = new Date();
+    res.json({ unix: now.gegit stTime(), utc: now.toUTCString() });
   }
-  let output = new Date().toUTCString()
-  
-})
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
