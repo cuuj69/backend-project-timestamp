@@ -28,23 +28,40 @@ app.get("/api/hello", function (req, res) {
 
 
 
-app.get("/api/date?",(req,res)=>{
+app.get("/api/:date?",(req,res)=>{
   let { date } = req.params;
 
   if (date) {
-    // Check if the provided date is valid
-    let parsedDate = new Date(date);
-    if (isNaN(parsedDate)) {
-      // If the parsed date is invalid, return the error object
-      res.json({ error: "Invalid Date" });
+    // Check if the provided date is a valid number (Unix timestamp)
+    if (!isNaN(date)) {
+      // Convert the date to a number and create the Date object
+      let unixTimestamp = Number(date);
+      let parsedDate = new Date(unixTimestamp);
+
+      // Check if the parsed date is valid
+      if (isNaN(parsedDate)) {
+        // If the parsed date is invalid, return the error object
+        res.json({ error: "Invalid Date" });
+      } else {
+        // If the parsed date is valid, return the Unix timestamp and UTC string
+        res.json({ unix: unixTimestamp, utc: parsedDate.toUTCString() });
+      }
     } else {
-      // If the parsed date is valid, return the Unix timestamp and UTC string
-      res.json({ unix: parsedDate.getTime(), utc: parsedDate.toUTCString() });
+      // The date is a string, try parsing it as a regular date
+      let parsedDate = new Date(date);
+
+      if (isNaN(parsedDate)) {
+        // If the parsed date is invalid, return the error object
+        res.json({ error: "Invalid Date" });
+      } else {
+        // If the parsed date is valid, return the Unix timestamp and UTC string
+        res.json({ unix: parsedDate.getTime(), utc: parsedDate.toUTCString() });
+      }
     }
   } else {
     // If the date parameter is empty, return the current time
     let now = new Date();
-    res.json({ unix: now.gegit stTime(), utc: now.toUTCString() });
+    res.json({ unix: now.getTime(), utc: now.toUTCString() });
   }
 });
 
