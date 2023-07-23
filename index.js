@@ -28,6 +28,12 @@ app.get("/api/hello", function (req, res) {
 
 
 
+app.get("/api", (req, res) => {
+  const currentDate = new Date().toUTCString();
+  const currentUnix = Date.parse(currentDate);
+  res.json({ unix: currentUnix, utc: currentDate });
+});
+
 app.get("/api/:date?", (req, res) => {
   let { date } = req.params;
 
@@ -55,8 +61,8 @@ app.get("/api/:date?", (req, res) => {
     // The date is a string, try parsing it as a regular date
     let parsedDate = new Date(date);
 
-    if (isNaN(parsedDate)) {
-      // If the parsed date is invalid, return the error object
+    if (isNaN(parsedDate) || date.trim() === "") {
+      // If the parsed date is invalid or an empty string, return the error object
       res.json({ error: "Invalid Date" });
     } else {
       // If the parsed date is valid, return the Unix timestamp and UTC string
@@ -64,6 +70,7 @@ app.get("/api/:date?", (req, res) => {
     }
   }
 });
+
 
 
 // listen for requests :)
